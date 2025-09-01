@@ -1,4 +1,5 @@
 import './App.css';
+import './testdb.json'
 
 function App() {
   return (

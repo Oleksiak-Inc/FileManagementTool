@@ -1,0 +1,1 @@
+SELECT id, name, email, pass FROM users WHERE id=?;
