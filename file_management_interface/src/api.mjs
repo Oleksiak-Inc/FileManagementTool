@@ -73,8 +73,10 @@ async function main() {
   await addUser('Kate', "kate@mail.com", "passwordtest2");
   await getUsers();
   await getUser(1);
+  /*
   await delUser("ann@mail.com");
   await delUser("kate@mail.com");
-}
+  */
+  }
 
 main();
