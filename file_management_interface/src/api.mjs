@@ -1,11 +1,11 @@
 import fetch from 'node-fetch'
 export const API_URL = 'http://localhost:5000';
 
-export async function addUser(name, email, pass) {
+export async function addUser(name, email, password) {
   return fetch(`${API_URL}/users`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, pass })
+    body: JSON.stringify({ name, email, password })
   })
     .then(res => res.json())
     .then(data => {
@@ -35,7 +35,6 @@ export async function getUsers() {
 };
 
 export async function getUser(id) {
-  console.log(`${API_URL}/users/${id}`)
   return fetch(`${API_URL}/users/${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" }
@@ -72,10 +71,10 @@ async function main() {
   await addUser('Ann', "ann@mail.com", "passwordtest1");
   await addUser('Kate', "kate@mail.com", "passwordtest2");
   await getUsers();
-  await getUser(1);
+  await getUser('ann@mail.com');
   /*
-  await delUser("ann@mail.com");
-  await delUser("kate@mail.com");
+  await delUser(1);
+  await delUser(2);
   */
   }
 

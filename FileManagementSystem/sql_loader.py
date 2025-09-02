@@ -8,13 +8,14 @@ class SQL_COMMANDS():
 
 def sql_commands_loader(sql_dir) -> dict:
     sql_dict = dict()
-    for file in os.listdir(sql_dir):
-        if file.endswith(".sql"):
-            full_path = os.path.join(sql_dir, file)
-            filename, _ = os.path.splitext(file)
-            with open(full_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            sql_dict[filename] = content
+    for root, dirs, files in os.walk(sql_dir):
+        for file in files:
+            if file.endswith(".sql"):
+                full_path = os.path.join(root, file)
+                filename, _ = os.path.splitext(file)
+                with open(full_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                sql_dict[filename] = content
     return sql_dict
     
 
