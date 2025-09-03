@@ -1,6 +1,6 @@
 import bcrypt, base64
 
-def encrypt_password(password):
+def hash_password(password):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     hashed_b64 = base64.b64encode(hashed).decode('utf-8')
@@ -13,7 +13,7 @@ def authenticate(password: str, stored_hash_b64: str) -> bool:
 
 if __name__ == "__main__":
     # Example usage
-    stored = encrypt_password("ABC")
+    stored = hash_password("ABC")
     print("Stored hash (Base64):", stored)
 
     if authenticate("ABC", stored):

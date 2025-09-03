@@ -1,23 +1,6 @@
 import fetch from 'node-fetch'
 export const API_URL = 'http://localhost:5000';
 
-export async function addUser(name, email, password) {
-  return fetch(`${API_URL}/users`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password })
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("POST response:", data);
-      return data;
-    })
-    .catch(err => {
-      console.error("POST error:", err);
-      throw err;
-    });
-};
-
 export async function getUsers() {
   return fetch(`${API_URL}/users`, {
     method: "GET",
@@ -50,6 +33,40 @@ export async function getUser(id) {
     });
 };
 
+export async function addUser(name, email, password) {
+  return fetch(`${API_URL}/users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("POST response:", data);
+      return data;
+    })
+    .catch(err => {
+      console.error("POST error:", err);
+      throw err;
+    });
+};
+
+export async function authUser(email, password){
+  return fetch(`${API_URL}/auth`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({email, password})
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("POST response:", data);
+    return data;
+  })
+  .catch(err => {
+    console.error("POST error:", err);
+    throw err;
+  })
+}
+
 export async function delUser(email) {
   return fetch(`${API_URL}/users`, {
     method: "DELETE",
@@ -72,6 +89,7 @@ async function main() {
   await addUser('Kate', "kate@mail.com", "passwordtest2");
   await getUsers();
   await getUser('ann@mail.com');
+  await authUser('ann@mail.com', 'passwordtest1')
   /*
   await delUser(1);
   await delUser(2);

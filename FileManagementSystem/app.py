@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 import db
 from main import SQL_ADDRES
 from sql_loader import SQL_COMMANDS
-from auth import encrypt_password, authenticate
+from auth import hash_password, authenticate
 
 app = Flask(__name__)
 sql_commands = SQL_COMMANDS().SQL_DICT
@@ -15,18 +15,18 @@ def run(debug: bool, host: str, port: int):
 @db.db_connection(SQL_ADDRES)
 def get_users(conn):
     try:
-        users = conn.execute(sql_commands['get_users']).fetchall()
+        users = conn.execute(sql_commands['get_public_users']).fetchall()
         return {"status": "success", "message": [dict(row) for row in users]}
     except Exception as e:
         return {"status": "fail", "message": f"Cannot fetch data. Error: {e}"}
 
-@app.route('/users/<mail>', methods=['GET'], strict_slashes=False)
+@app.route('/users/<string:mail>', methods=['GET'], strict_slashes=False)
 @db.db_connection(SQL_ADDRES)
 def get_user(conn, mail):
     try:
-        user = conn.execute(sql_commands['get_user'], (mail, )).fetchone()
+        user = conn.execute(sql_commands['get_public_user'], (mail, )).fetchone()
         if user:
-            return {"status": "success", "message": [user]}
+            return {"status": "success", "message": [dict(user)]}
         else:
             return {"status": "fail", "message": "User does not exist"}
     except Exception as e:
@@ -34,17 +34,17 @@ def get_user(conn, mail):
 
 @app.route('/auth', methods=['POST'], strict_slashes=False)
 @db.db_connection(SQL_ADDRES)
-def auth_user(conn, mail):
+def auth_user(conn):
     try:
-        user = conn.execute(sql_commands['get_user'], (mail, )).fetchone()
+        data = request.get_json()
+        mail = data.get("email")
+        password = data.get("password")
+        if not mail or not password:
+            return {"status": "fail", "message": "Email and password are required"}
+        
+        user = conn.execute(sql_commands['get_private_user'], (mail, )).fetchone()
         if not user:
             return {"status": "fail", "message": "User not found"}
-        
-        data = request.get_json()
-        email = data.get("email")
-        password = data.get("password")
-        if not email or not password:
-            return {"status": "fail", "message": "Email and password are required"}
         
         stored_hash_b64 = user["password"]
         auth_result = authenticate(password=password,stored_hash_b64=stored_hash_b64)
@@ -64,7 +64,7 @@ def add_user(conn):
         name = data.get('name')
         email = data.get('email')
         password = data.get('password')
-        hashed_password = encrypt_password(password)
+        hashed_password = hash_password(password)
         conn.execute(sql_commands['add_user'], (name, email, hashed_password))
         conn.commit()
         return {"status": "success", "message": f"User {name} added"}
