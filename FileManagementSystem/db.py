@@ -14,3 +14,6 @@ def db_connection(addr, return_json: bool=True):
                     return func(*args, conn=conn, **kwargs)
         return wrapper
     return connect
+
+def create_table():
+    return 0
