@@ -1,4 +1,4 @@
-CREATE TABLE file_list (
+CREATE TABLE IF NOT EXISTS file_list (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     run_id INTEGER,
     project_id INTEGER,
