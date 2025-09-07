@@ -13,10 +13,10 @@ def authenticate(password: str, stored_hash_b64: str) -> bool:
 
 if __name__ == "__main__":
     # Example usage
-    stored = hash_password("ABC")
+    stored = hash_password("test1234")
     print("Stored hash (Base64):", stored)
 
-    if authenticate("ABC", stored):
+    if authenticate("test1234", stored):
         print("auth")
     else:
         print("notauth")

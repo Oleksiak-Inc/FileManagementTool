@@ -2,7 +2,7 @@ import functools
 import sqlite3 as sql
 from flask import jsonify
 
-def db_connection(addr, return_json: bool=True):
+def db_connection(addr: str, return_json: bool=True):
     def connect(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -11,9 +11,6 @@ def db_connection(addr, return_json: bool=True):
                 if return_json:
                     return jsonify(func(*args, conn=conn, **kwargs))
                 else:
-                    return func(*args, conn=conn, **kwargs)
+                    return func(conn=conn)
         return wrapper
     return connect
-
-def create_table():
-    return 0

@@ -1,10 +1,10 @@
 import os
 
-class SQL_COMMANDS():
+class SQL_COMMANDS(dict):
     def __init__(self):
-        self.ROOT = os.path.dirname(os.path.abspath(__file__))
-        self.SQL_DIR = os.path.join(self.ROOT, "sql")
-        self.SQL_DICT = sql_commands_loader(self.SQL_DIR)
+        root = os.path.dirname(os.path.abspath(__file__))
+        sql_dir = os.path.join(root, "sql")
+        super().__init__(sql_commands_loader(sql_dir))
 
 def sql_commands_loader(sql_dir) -> dict:
     sql_dict = dict()
@@ -20,5 +20,5 @@ def sql_commands_loader(sql_dir) -> dict:
     
 
 if __name__ == "__main__":
-    sql_commands = SQL_COMMANDS().SQL_DICT
+    sql_commands = SQL_COMMANDS()
     print(sql_commands)

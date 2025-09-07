@@ -17,8 +17,8 @@ export async function getUsers() {
     });
 };
 
-export async function getUser(id) {
-  return fetch(`${API_URL}/users/${id}`, {
+export async function getUser(mail) {
+  return fetch(`${API_URL}/users/${mail}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   })
