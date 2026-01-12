@@ -1,1 +1,1 @@
-INSERT INTO users (name, email, password) VALUES (?, ?, ?);
+INSERT INTO "user" (first_name, last_name, email, password, user_type_id) VALUES (%s, %s, %s, %s, %s);

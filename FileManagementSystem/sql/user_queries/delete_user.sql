@@ -1,1 +1,1 @@
-DELETE FROM users WHERE id=?;
+DELETE FROM "user" WHERE email=%s;

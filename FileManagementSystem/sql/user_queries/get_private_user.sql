@@ -1,1 +1,1 @@
-SELECT id, name, email, password FROM users WHERE email=?;
+SELECT id, first_name, last_name, email, password, user_type_id FROM "user" WHERE email=%s;

@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS statuses_list (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    statuses JSON
-);

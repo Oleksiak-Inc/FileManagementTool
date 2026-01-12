@@ -1,10 +1,28 @@
-import fetch from 'node-fetch'
+//temporary token storage
+
+let accessToken = null;
+
+//modify when cookies implemented
+
+function authHeaders() {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  if (accessToken) {
+    headers["Authorization"] = `Bearer ${accessToken}`;
+  }
+
+  return headers;
+}
+
+
 export const API_URL = 'http://localhost:5000';
 
 export async function getUsers() {
-  return fetch(`${API_URL}/users`, {
+  return fetch(`${API_URL}/users/`, {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: authHeaders()
   })
   .then(res => res.json())
   .then(data => {
@@ -20,7 +38,7 @@ export async function getUsers() {
 export async function getUser(mail) {
   return fetch(`${API_URL}/users/${mail}`, {
     method: "GET",
-    headers: { "Content-Type": "application/json" }
+    headers: authHeaders()
   })
   .then(res => res.json())
   .then(data => {
@@ -33,11 +51,11 @@ export async function getUser(mail) {
     });
 };
 
-export async function addUser(name, email, password) {
-  return fetch(`${API_URL}/users`, {
+export async function addUser(first_name, last_name, email, password, user_type_id) {
+  return fetch(`${API_URL}/users/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password })
+    headers: authHeaders(),
+    body: JSON.stringify({ first_name, last_name, email, password, user_type_id })
   })
     .then(res => res.json())
     .then(data => {
@@ -51,14 +69,15 @@ export async function addUser(name, email, password) {
 };
 
 export async function authUser(email, password){
-  return fetch(`${API_URL}/auth`, {
+  return fetch(`${API_URL}/auth/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({email, password})
   })
   .then(res => res.json())
   .then(data => {
     console.log("POST response:", data);
+    accessToken = data.access_token;
     return data;
   })
   .catch(err => {
@@ -68,32 +87,29 @@ export async function authUser(email, password){
 }
 
 export async function delUser(email) {
-  return fetch(`${API_URL}/users`, {
+  return fetch(`${API_URL}/users/${email}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email })
+    headers: authHeaders()
   })
   .then(res => res.json())
   .then(data => {
-    console.log("DELETE response:", data)
-    return data
-  })
-  .catch(err => {
-      console.error("DELETE error:", err);
-      throw err;
-    });
+    console.log("DELETE response:", data);
+    return data;
+  });
 }
 
+
 async function main() {
-  await addUser('Ann', "ann@mail.com", "passwordtest1");
-  await addUser('Kate', "kate@mail.com", "passwordtest2");
+  
+  await authUser('admin@test.com', 'strongpassword');
+  await addUser('Ann', 'smith', "ann@mail.com", "passwordtest1", 1);
+  await addUser('Kate', 'Johnson', "kate@mail.com", "passwordtest2", 1);
+  await addUser('Kristy', 'Albert', "kristy@mail.com", "passwordtest3", 1);
   await getUsers();
   await getUser('ann@mail.com');
-  await authUser('ann@mail.com', 'passwordtest1')
-  /*
-  await delUser(1);
-  await delUser(2);
-  */
+  
+  await delUser("kate@mail.com");
+  await delUser("kristy@mail.com");
   }
 
 main();
