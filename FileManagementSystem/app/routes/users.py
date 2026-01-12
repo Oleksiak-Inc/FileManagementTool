@@ -1,22 +1,14 @@
-from flask import request, jsonify
-from flask_jwt_extended import (
-    jwt_required, 
-    get_jwt_identity,
-    verify_jwt_in_request
-)
-from flask_smorest import Blueprint
+from flask_jwt_extended import jwt_required
+from flask_smorest import Blueprint, abort
 from database.db_utils import db_route
 from app.services.users_service import (
     get_all_users,
     get_user_by_mail,
     add_user,
-    delete_user,
-    is_bootstrap_allowed,
+    delete_user
 )
-from app.schemas.user import (
-    UserSchema,
-    UserCreateSchema
-)
+from app.schemas.user import UserSchema, UserCreateSchema
+from app.schemas.error import ErrorSchema
 
 users_bp = Blueprint(
     "users",
@@ -25,6 +17,7 @@ users_bp = Blueprint(
     description="User management"
 )
 
+# READ
 @users_bp.route("/", methods=["GET"])
 @users_bp.response(200, UserSchema(many=True))
 @users_bp.doc(security=[{"bearerAuth": []}])
@@ -33,51 +26,31 @@ def list_users():
     return db_route(get_all_users)
 
 @users_bp.route("/<string:mail>", methods=["GET"])
-@users_bp.response(200, UserSchema(many=True))
-@users_bp.doc(
-    security=[{"bearerAuth": []}],
-    parameters=[
-        {
-            "name": "mail",
-            "in": "path",
-            "required": True,
-            "schema": {"type": "string"}
-        }
-    ]
-)
+@users_bp.response(200, UserSchema)
+@users_bp.alt_response(404, schema=ErrorSchema)  # FIXED: Use schema= parameter
+@users_bp.doc(security=[{"bearerAuth": []}])
 @jwt_required()
 def get_user(mail):
-    return db_route(get_user_by_mail, mail)
+    user = db_route(get_user_by_mail, mail)
+    if not user:
+        abort(404, message="User not found")
+    return user
 
+# CREATE
 @users_bp.route("/", methods=["POST"])
 @users_bp.arguments(UserCreateSchema)
-@users_bp.response(200, UserSchema)
-@users_bp.doc(
-    description="First user can be created without JWT (bootstrap). JWT required otherwise.")
+@users_bp.response(201, UserSchema)
+@users_bp.alt_response(409, schema=ErrorSchema)  # FIXED: Use schema= parameter
+@users_bp.doc(security=[{"bearerAuth": []}])
+@jwt_required()
 def create_user(data):
-    
-    def handler(cur):
-        if not is_bootstrap_allowed(cur):
-            
-            verify_jwt_in_request()
+    return db_route(add_user, data)
 
-        return add_user(cur, data)
-
-    return db_route(handler)
-
+# DELETE
 @users_bp.route("/<string:email>", methods=["DELETE"])
-@users_bp.response(200, UserSchema)
-@users_bp.doc(
-    security=[{"bearerAuth": []}],
-    parameters=[
-        {
-            "name": "email",
-            "in": "path",
-            "required": True,
-            "schema": {"type": "string"}
-        }
-    ]
-)
+@users_bp.response(204)
+@users_bp.alt_response(404, schema=ErrorSchema)  # FIXED: Use schema= parameter
+@users_bp.doc(security=[{"bearerAuth": []}])
 @jwt_required()
 def remove_user(email):
-    return db_route(delete_user, {"email": email})
+    db_route(delete_user, email)

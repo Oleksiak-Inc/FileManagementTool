@@ -87,15 +87,17 @@ export async function authUser(email, password){
 }
 
 export async function delUser(email) {
-  return fetch(`${API_URL}/users/${email}`, {
+  const res = await fetch(`${API_URL}/users/${email}`, {
     method: "DELETE",
     headers: authHeaders()
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log("DELETE response:", data);
-    return data;
   });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || "Delete failed");
+  }
+
+  return true;
 }
 
 

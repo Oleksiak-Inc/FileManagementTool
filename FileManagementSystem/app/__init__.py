@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_smorest import Api
 from config import CONFIG
 from .routes import register_routes
+# REMOVE THIS IMPORT: from werkzeug.exceptions import HTTPException
 
 config = CONFIG()
 
@@ -20,12 +21,10 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    @app.errorhandler(Exception)
-    def handle_exception(e):
-        return {
-            "status": "error",
-            "msg": str(e)
-        }, 500
+    # REMOVE OR COMMENT THIS SECTION
+    # @app.errorhandler(HTTPException)
+    # def handle_http_exception(e):
+    #     return {"message": e.description}, e.code
 
     api = Api(app)
     register_routes(api)
