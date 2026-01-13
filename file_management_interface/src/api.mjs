@@ -16,7 +16,6 @@ function authHeaders() {
   return headers;
 }
 
-
 export const API_URL = 'http://localhost:5000';
 
 export async function getUsers() {
@@ -86,21 +85,6 @@ export async function authUser(email, password){
   })
 }
 
-export async function delUser(email) {
-  const res = await fetch(`${API_URL}/users/${email}`, {
-    method: "DELETE",
-    headers: authHeaders()
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Delete failed");
-  }
-
-  return true;
-}
-
-
 async function main() {
   
   await authUser('admin@test.com', 'strongpassword');
@@ -109,9 +93,6 @@ async function main() {
   await addUser('Kristy', 'Albert', "kristy@mail.com", "passwordtest3", 1);
   await getUsers();
   await getUser('ann@mail.com');
-  
-  await delUser("kate@mail.com");
-  await delUser("kristy@mail.com");
   }
 
 main();

@@ -18,7 +18,24 @@ def create_app():
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger"
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-
+    app.config["OPENAPI_SWAGGER_UI_CONFIG"] = {
+        "persistAuthorization": True,
+        "displayRequestDuration": True,
+    }
+    app.config["API_SPEC_OPTIONS"] = {
+        "components": {
+            "securitySchemes": {
+                "bearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                    "description": "Enter JWT Bearer token (Format: 'Bearer <token>')"
+                }
+            }
+        },
+        "security": [{"bearerAuth": []}]
+    }
+    
     jwt = JWTManager(app)
 
     # REMOVE OR COMMENT THIS SECTION

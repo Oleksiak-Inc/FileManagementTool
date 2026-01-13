@@ -1,22 +1,32 @@
-import os
+from pathlib import Path
 
-class SQL_COMMANDS(dict):
+class SQL_COMMANDS:
     def __init__(self):
-        root = os.path.dirname(os.path.abspath(__file__))
-        sql_dir = os.path.join(root, "sql")
-        super().__init__(sql_commands_loader(sql_dir))
+        root = Path(__file__).resolve().parent
+        self.commands = load_sql_commands(root / "sql")
 
-def sql_commands_loader(sql_dir) -> dict:
-    sql_dict = dict()
-    for root, dirs, files in os.walk(sql_dir):
-        for file in files:
-            if file.endswith(".sql"):
-                full_path = os.path.join(root, file)
-                filename, _ = os.path.splitext(file)
-                with open(full_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-                sql_dict[filename] = content
-    return sql_dict
+    def __getitem__(self, item):
+        return self.commands[item]
+
+    def __repr__(self):
+        return repr(self.commands)
+
+
+def load_sql_commands(sql_dir: Path) -> dict:
+    tree = {}
+
+    for path in sql_dir.rglob("*.sql"):
+        relative_parts = path.relative_to(sql_dir).parts
+        *folders, filename = relative_parts
+        key = path.stem
+
+        current = tree
+        for folder in folders:
+            current = current.setdefault(folder, {})
+
+        current[key] = path.read_text(encoding="utf-8")
+
+    return tree
     
 
 if __name__ == "__main__":

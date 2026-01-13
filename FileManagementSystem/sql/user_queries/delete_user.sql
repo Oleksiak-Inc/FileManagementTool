@@ -1,1 +1,0 @@
-DELETE FROM "user" WHERE email=%s RETURNING id;

@@ -4,7 +4,7 @@ from auth import authenticate
 sql = SQL_COMMANDS()
 
 def authenticate_user(cur, data):
-    user = cur.execute(sql["get_private_user"], (data["email"],)).fetchone()
+    user = cur.execute(sql["user"]["get_private_user"], (data["email"],)).fetchone()
     if not user:
         return None
 

@@ -3,7 +3,7 @@ from flask_smorest import Blueprint, abort
 from app.schemas.auth import LoginSchema, TokenSchema
 from app.schemas.error import ErrorSchema
 from app.services.auth_service import authenticate_user
-from FileManagementSystem.app.routes.db import db_route
+from app.routes.db import db_route
 
 auth_bp = Blueprint(
     "auth",

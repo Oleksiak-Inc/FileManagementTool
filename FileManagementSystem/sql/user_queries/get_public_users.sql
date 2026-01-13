@@ -1,1 +1,0 @@
-SELECT id, first_name, last_name, email, user_type_id FROM "user";

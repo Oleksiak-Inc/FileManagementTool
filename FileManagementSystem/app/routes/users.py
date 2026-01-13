@@ -1,13 +1,14 @@
 from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint, abort
-from FileManagementSystem.app.routes.db import db_route
+from app.routes.db import db_route
 from app.services.users_service import (
     get_all_users,
     get_user_by_mail,
-    add_user,
-    delete_user
+    add_user
 )
-from app.schemas.user import UserSchema, UserCreateSchema
+from app.schemas.user import (
+    UserSchema, 
+    UserCreateSchema)
 from app.schemas.error import ErrorSchema
 
 users_bp = Blueprint(
@@ -41,9 +42,10 @@ def post_response(response_schema, alt_response=None, arguments_schema=None):
         return f
     return decorator
 
-def delete_response(alt_response=None):
+def delete_response(response_schema, alt_response=None):
     def decorator(f):
-        f = users_bp.response(204)(f)
+        if response_schema:
+            f = users_bp.response(200, response_schema)(f)
         if alt_response:
             f = users_bp.alt_response(alt_response[0], schema=alt_response[1])(f)
         f = users_bp.doc(security=[{"bearerAuth": []}])(f)
@@ -71,9 +73,3 @@ def get_user(mail):
                arguments_schema=UserCreateSchema)
 def create_user(data):
     return db_route(add_user, data)
-
-# DELETE
-@users_bp.route("/<string:email>", methods=["DELETE"])
-@delete_response(alt_response=(404, ErrorSchema))
-def remove_user(email):
-    db_route(delete_user, email)

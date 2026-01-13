@@ -4,7 +4,7 @@ sql = SQL_COMMANDS()
 
 def initialize_database(cur):
     try:
-        cur.execute(sql["init"])
+        cur.execute(sql["db"]["init"])
         return {
             "status": "success",
             "msg": "Database schema initialized successfully",
