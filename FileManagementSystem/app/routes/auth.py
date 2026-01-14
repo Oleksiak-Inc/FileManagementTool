@@ -1,7 +1,7 @@
 from flask_jwt_extended import create_access_token
 from flask_smorest import Blueprint, abort
-from app.schemas.auth import LoginSchema, TokenSchema
-from app.schemas.error import ErrorSchema
+from app.schemas.auth_schema import LoginSchema, TokenSchema
+from app.schemas.error_schema import ErrorSchema
 from app.services.auth_service import authenticate_user
 from app.routes.db import db_route
 
@@ -35,7 +35,7 @@ def auth_get(response_schema, alt_response=None):
     return decorator
 
 # Now the login endpoint becomes much cleaner
-@auth_bp.route("/", methods=["POST"])
+@auth_bp.route("", methods=["POST"])
 @auth_post(TokenSchema, arguments_schema=LoginSchema, alt_response=(401, ErrorSchema))
 def login(data):
     user = db_route(authenticate_user, data)

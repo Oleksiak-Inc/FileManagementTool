@@ -27,8 +27,7 @@ def load_sql_commands(sql_dir: Path) -> dict:
         current[key] = path.read_text(encoding="utf-8")
 
     return tree
-    
 
 if __name__ == "__main__":
     sql_commands = SQL_COMMANDS()
-    print(sql_commands)
+    #print(sql_commands)

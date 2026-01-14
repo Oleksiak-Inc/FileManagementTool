@@ -7,7 +7,7 @@ root_bp = Blueprint(
     description="Service root"
 )
 
-@root_bp.route("/")
+@root_bp.route("")
 def root():
     return {
         "service": "FileManagementSystem",
