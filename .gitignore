@@ -30,3 +30,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# --- Misc ---
+backend_code.txt
+frontend_code.txt
+scrapper.py

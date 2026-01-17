@@ -1,0 +1,59 @@
+.test-management {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.test-management h1 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.description {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.test-groups {
+    display: grid;
+    gap: 2rem;
+}
+
+.test-group h2 {
+    color: #555;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #007bff;
+}
+
+.test-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.test-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.test-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.test-item h3 {
+    margin: 0 0 0.5rem 0;
+    color: #007bff;
+}
+
+.test-item p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}

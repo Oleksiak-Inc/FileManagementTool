@@ -1,49 +1,41 @@
-from flask import Flask
-from flask_jwt_extended import JWTManager
-from flask_smorest import Api
-from config import CONFIG
-from .routes import register_routes
-# REMOVE THIS IMPORT: from werkzeug.exceptions import HTTPException
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from app.config import settings
+from app.api import api_router
 
-config = CONFIG()
-
-def create_app():
-    app = Flask(__name__)
-    app.url_map.strict_slashes = False
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="File Management System API",
+        description="File Management System with FastAPI and SQLAlchemy",
+        version="1.0.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+        openapi_url="/openapi.json"
+    )
     
-    app.config["JWT_SECRET_KEY"] = config["JWT_SECRET_KEY"]
-    app.config["API_TITLE"] = "File Management System"
-    app.config["API_VERSION"] = "v1"
-    app.config["OPENAPI_VERSION"] = "3.0.3"
-    app.config["OPENAPI_URL_PREFIX"] = "/"
-    app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger"
-    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    app.config["OPENAPI_SWAGGER_UI_CONFIG"] = {
-        "persistAuthorization": True,
-        "displayRequestDuration": True,
-    }
-    app.config["API_SPEC_OPTIONS"] = {
-        "components": {
-            "securitySchemes": {
-                "bearerAuth": {
-                    "type": "http",
-                    "scheme": "bearer",
-                    "bearerFormat": "JWT",
-                    "description": "Enter JWT Bearer token (Format: 'Bearer <token>')"
-                }
-            }
-        },
-        "security": [{"bearerAuth": []}]
-    }
+    # CORS middleware
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Configure for production
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     
-    jwt = JWTManager(app)
-
-    # REMOVE OR COMMENT THIS SECTION
-    # @app.errorhandler(HTTPException)
-    # def handle_http_exception(e):
-    #     return {"message": e.description}, e.code
-
-    api = Api(app)
-    register_routes(api)
-
+    # Include routers
+    app.include_router(api_router, prefix="/api/v1")
+    
+    @app.get("/")
+    def root():
+        return {
+            "service": "FileManagementSystem",
+            "status": "running",
+            "docs": "/docs",
+            "api_version": "v1"
+        }
+    
+    @app.get("/health")
+    def health_check():
+        return {"status": "healthy"}
+    
     return app

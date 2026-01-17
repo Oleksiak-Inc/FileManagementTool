@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: fm_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: testarray
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./FileManagementSystem
+      dockerfile: Dockerfile
+    container_name: fm_backend
+    restart: on-failure
+    environment:
+      DB_USER: admin
+      DB_PASSWORD: supersecret
+      JWT_SECRET_KEY: your-secret-key-here
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: testarray
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./file_management_interface
+      dockerfile: Dockerfile
+    container_name: fm_frontend
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
